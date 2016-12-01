@@ -1,16 +1,21 @@
 package termproject;
 
 /**
- * Title:        Term Project 2-4 Trees
- * Description:
- * Copyright:    Copyright (c) 2001
- * Company:
- * @author
- * @version 1.0
- */
-public class TwoFourTree
-        implements Dictionary {
-
+  * 
+  *
+  * @author James Osborne
+  * @author Spencer Graffunder
+  * @version 1.0 
+  * File: TwoFourTree.java
+  * Created:  12 Dec 2016
+  * ©Copyright James Osborne and Spencer Graffunder. All rights reserved.
+  * Summary of Modifications:
+  *     01 Dec 2016 - JAO - Added some initial exception throws for
+  *     InvalidIntegerException cases.
+  * 
+  * Description: 
+  */
+public class TwoFourTree implements Dictionary {
     private Comparator treeComp;
     private int size = 0;
     private TFNode treeRoot = null;
@@ -36,30 +41,44 @@ public class TwoFourTree
     }
 
     /**
-     * Searches dictionary to determine if key is present
-     * @param key to be searched for
-     * @return object corresponding to key; null if not found
-     */
+      * Searches dictionary to determine if key is present
+      * @param key to be searched for
+      * @return object corresponding to key; null if not found
+      */
     public Object findElement(Object key) {
+        if (!treeComp.isComparable(key)) {
+            throw new InvalidIntegerException("Key was not an integer");
+        }
+        
         return null;
     }
 
     /**
-     * Inserts provided element into the Dictionary
-     * @param key of object to be inserted
-     * @param element to be inserted
-     */
+      * Inserts provided element into the Dictionary
+      * @param key of object to be inserted
+      * @param element to be inserted
+      */
     public void insertElement(Object key, Object element) {
+        if (!treeComp.isComparable(key)) {
+            throw new InvalidIntegerException("Key was not an integer");
+        }
+        if (!treeComp.isComparable(element)) {
+            throw new InvalidIntegerException("Element was not an integer");
+        }
     }
 
     /**
-     * Searches dictionary to determine if key is present, then
-     * removes and returns corresponding object
-     * @param key of data to be removed
-     * @return object corresponding to key
-     * @exception ElementNotFoundException if the key is not in dictionary
-     */
+      * Searches dictionary to determine if key is present, then
+      * removes and returns corresponding object
+      * @param key of data to be removed
+      * @return object corresponding to key
+      * @exception ElementNotFoundException if the key is not in dictionary
+      */
     public Object removeElement(Object key) throws ElementNotFoundException {
+        if (!treeComp.isComparable(key)) {
+            throw new InvalidIntegerException("Key was not an integer");
+        }
+        
         return null;
     }
 
@@ -131,24 +150,29 @@ public class TwoFourTree
 
         for (int i = 0; i < TEST_SIZE; i++) {
             myTree.insertElement(new Integer(i), new Integer(i));
-            //          myTree.printAllElements();
-            //         myTree.checkTree();
+            //myTree.printAllElements();
+            //myTree.checkTree();
         }
+        
         System.out.println("removing");
+        
         for (int i = 0; i < TEST_SIZE; i++) {
             int out = (Integer) myTree.removeElement(new Integer(i));
+        
             if (out != i) {
                 throw new TwoFourTreeException("main: wrong element removed");
             }
-            if (i > TEST_SIZE - 15) {
+            if (i > (TEST_SIZE - 15)) {
                 myTree.printAllElements();
             }
         }
+        
         System.out.println("done");
     }
 
     public void printAllElements() {
         int indent = 0;
+       
         if (root() == null) {
             System.out.println("The tree is empty");
         }
@@ -161,12 +185,16 @@ public class TwoFourTree
         if (start == null) {
             return;
         }
+        
         for (int i = 0; i < indent; i++) {
             System.out.print(" ");
         }
+        
         printTFNode(start);
         indent += 4;
+        
         int numChildren = start.getNumItems() + 1;
+        
         for (int i = 0; i < numChildren; i++) {
             printTree(start.getChild(i), indent);
         }
@@ -174,9 +202,11 @@ public class TwoFourTree
 
     public void printTFNode(TFNode node) {
         int numItems = node.getNumItems();
+        
         for (int i = 0; i < numItems; i++) {
             System.out.print(((Item) node.getItem(i)).element() + " ");
         }
+        
         System.out.println();
     }
 
@@ -192,8 +222,11 @@ public class TwoFourTree
 
         if (start.getParent() != null) {
             TFNode parent = start.getParent();
-            int childIndex = 0;
-            for (childIndex = 0; childIndex <= parent.getNumItems(); childIndex++) {
+         
+            int childIndex;
+         
+            for (childIndex = 0; childIndex <= parent.getNumItems(); 
+                                 childIndex++) {
                 if (parent.getChild(childIndex) == start) {
                     break;
                 }
@@ -206,7 +239,8 @@ public class TwoFourTree
         }
 
         if (start.getChild(0) != null) {
-            for (int childIndex = 0; childIndex <= start.getNumItems(); childIndex++) {
+            for (int childIndex = 0; childIndex <= start.getNumItems();
+                                     childIndex++) {
                 if (start.getChild(childIndex) == null) {
                     System.out.println("Mixed null and non-null children");
                     printTFNode(start);
@@ -216,6 +250,7 @@ public class TwoFourTree
                         System.out.println("Parent to child confusion");
                         printTFNode(start);
                     }
+        
                     for (int i = childIndex - 1; i >= 0; i--) {
                         if (start.getChild(i) == start.getChild(childIndex)) {
                             System.out.println("Duplicate children of node");
@@ -228,9 +263,9 @@ public class TwoFourTree
         }
 
         int numChildren = start.getNumItems() + 1;
+        
         for (int childIndex = 0; childIndex < numChildren; childIndex++) {
             checkTreeFromNode(start.getChild(childIndex));
         }
-
     }
 }
