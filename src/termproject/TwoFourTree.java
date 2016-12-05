@@ -66,6 +66,17 @@ public class TwoFourTree implements Dictionary {
         if (!treeComp.isComparable(element)) {
             throw new InvalidIntegerException("Element was not an integer");
         }
+        
+        Item insert = new Item(key, element);
+        
+        if (treeRoot == null) {
+            treeRoot = new TFNode();
+            
+            treeRoot.addItem(0, insert);
+        }
+        else {
+            
+        }
     }
 
     /**
@@ -123,6 +134,11 @@ public class TwoFourTree implements Dictionary {
         System.out.println();
     }
 
+    /**
+      * 
+      * @param node 
+      * @return index showing 
+      */
     private int wcit(TFNode node) {
         if (node == null) {
             throw new TFNodeException("TFNode was null");
