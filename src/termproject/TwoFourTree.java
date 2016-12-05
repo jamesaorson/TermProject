@@ -160,6 +160,18 @@ public class TwoFourTree implements Dictionary {
             throw new ElementNotFoundException("Something is wrong in wcit()");            
         }
     }
+	
+	private int ffgtet(TFNode node, Object key){
+		// go through the node item array and return insert point
+		for(int i = 0; i < node.getNumItems(); i++){
+			if(!treeComp.isLessThan(key, node.getItem(i).key())){
+				return i;
+			}
+		}
+		// if we haven't returned at this point, the insert point is at the
+		// first unoccupied index.
+		return node.getNumItems();
+	}
     
     // checks if tree is properly hooked up, i.e., children point to parents
     public void checkTree() {
