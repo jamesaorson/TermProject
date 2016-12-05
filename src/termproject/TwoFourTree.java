@@ -12,7 +12,8 @@ package termproject;
   * Summary of Modifications:
   *     01 Dec 2016 - JAO - Added some initial exception throws for
   *     InvalidIntegerException cases.
-  *     05 Dec 2016 - JAO - Added wcit()
+  *     05 Dec 2016 - JAO - Added wcit() and got insertElement() to shift.
+  *                         Does not handle overflow.
   *		05 Dec 2016 - STG - Added ffgtet()
   *	                        Completed findElement()
   * 
@@ -119,12 +120,12 @@ public class TwoFourTree implements Dictionary {
 				//Make item from tempKey and tempElement.
 				insertItem = new Item(tempKey, tempElement);
 				
-				treeRoot.replaceItem(i, insertItem);				
-				
 				//Must keep key and element as ints to avoid
 				//pointer confusion.
 				tempKey = (int) (treeRoot.getItem(i).key());
 				tempElement = (int) (treeRoot.getItem(i).element());
+				
+				treeRoot.replaceItem(i, insertItem);
 			}
 			
 			//Adds last item in for shift process.
@@ -224,7 +225,7 @@ public class TwoFourTree implements Dictionary {
     private int ffgtet(TFNode node, Object key){
         // go through the node item array and return insert point
         for (int i = 0; i < node.getNumItems(); i++){
-            if (!treeComp.isLessThan(key, node.getItem(i).key())){
+            if (!treeComp.isLessThan(node.getItem(i).key(), key)){
                 return i;
             }
         }
