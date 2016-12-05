@@ -13,6 +13,8 @@ package termproject;
   *     01 Dec 2016 - JAO - Added some initial exception throws for
   *     InvalidIntegerException cases.
   *     05 Dec 2016 - JAO - Added wcit()
+  *		05 Dec 2016 - STG - Added ffgtet()
+  *		05 Dec 2016 - STG - Completed findElement()
   * 
   * Description: 
   */
@@ -50,8 +52,28 @@ public class TwoFourTree implements Dictionary {
         if (!treeComp.isComparable(key)) {
             throw new InvalidIntegerException("Key was not an integer");
         }
-        
-        return null;
+		Object result = null;
+		TFNode currentNode;
+		currentNode = treeRoot;
+		boolean isFinished = false;
+		// while we havent found the item
+		while(!isFinished){
+			int index = ffgtet(currentNode, key);
+			Object currentKey = currentNode.getItem(index).key();
+			// if the thing at index equals the incoming key
+			if(treeComp.isEqual(currentKey, key)){
+				result = currentNode.getItem(index);
+				isFinished = true;
+			}else{
+				TFNode nextNode = currentNode.getChild(index);
+				if(nextNode == null){
+					isFinished = true;
+				}else{
+					currentNode = nextNode;
+				}
+			}
+		}
+		return result;
     }
 
     /**
