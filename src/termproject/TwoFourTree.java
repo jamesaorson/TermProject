@@ -12,6 +12,7 @@ package termproject;
   * Summary of Modifications:
   *     01 Dec 2016 - JAO - Added some initial exception throws for
   *     InvalidIntegerException cases.
+  *     05 Dec 2016 - JAO - Added wcit()
   * 
   * Description: 
   */
@@ -122,6 +123,28 @@ public class TwoFourTree implements Dictionary {
         System.out.println();
     }
 
+    private int wcit(TFNode node) {
+        if (node == null) {
+            throw new TFNodeException("TFNode was null");
+        }
+        
+        TFNode parent = node.getParent();
+        
+        if (parent == null) {
+            //?
+            return -1;
+        }
+        else {
+            for (int i = 0; i < parent.getNumItems() + 1; ++i) {
+                if (node == parent.getChild(i)) {
+                    return i;
+                }
+            }
+            
+            throw new ElementNotFoundException("Something is wrong in wcit()");            
+        }
+    }
+    
     // checks if tree is properly hooked up, i.e., children point to parents
     public void checkTree() {
         checkTreeFromNode(treeRoot);
@@ -267,6 +290,5 @@ public class TwoFourTree implements Dictionary {
         }
         
         System.out.println("done");
-    }
-	
+    }	
 }
