@@ -62,7 +62,7 @@ public class TwoFourTree implements Dictionary {
 		// while loop varible.
 		boolean isFinished = false;
 		
-		// while we haven't found the item or gotten to bottom of tree
+		// while we haven't found the item or gotten to bottom of tree,
 		while(!isFinished){
 			
 			// index of element or child we will be using.
