@@ -14,7 +14,7 @@ package termproject;
   *     InvalidIntegerException cases.
   *     05 Dec 2016 - JAO - Added wcit()
   *		05 Dec 2016 - STG - Added ffgtet()
-  *		05 Dec 2016 - STG - Completed findElement()
+  *	                        Completed findElement()
   * 
   * Description: 
   */
