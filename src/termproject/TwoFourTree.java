@@ -414,7 +414,7 @@ public class TwoFourTree implements Dictionary {
         Integer myInt3 = new Integer(22);
         myTree.insertElement(myInt3, myInt3);
 
-        Integer myInt4 = new Integer(16);
+        /*Integer myInt4 = new Integer(16);
         myTree.insertElement(myInt4, myInt4);
 
         Integer myInt5 = new Integer(49);
@@ -460,7 +460,7 @@ public class TwoFourTree implements Dictionary {
         myTree.insertElement(myInt18, myInt18);
 
         Integer myInt19 = new Integer(51);
-        myTree.insertElement(myInt19, myInt19);
+        myTree.insertElement(myInt19, myInt19);*/
 
         myTree.printAllElements();
         System.out.println("done");
