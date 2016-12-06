@@ -14,6 +14,7 @@ package termproject;
   *     InvalidIntegerException cases.
   *     05 Dec 2016 - JAO - Added wcit() and got insertElement() to shift.
   *                         Does not handle overflow.
+  *                         Need to make major changes to insert still.
   *		05 Dec 2016 - STG - Added ffgtet()
   *	                        Completed findElement()
   * 
