@@ -20,7 +20,7 @@ package termproject;
   * Description: 
   */
 public class TwoFourTree implements Dictionary {
-    private Comparator treeComp;
+	private Comparator treeComp;
     private int size = 0;
     private TFNode treeRoot = null;
 
@@ -102,18 +102,17 @@ public class TwoFourTree implements Dictionary {
             throw new InvalidIntegerException("Element was not an integer");
         }
         
-        Item insert = new Item(key, element);
+        Item insertItem = new Item(key, element);
         
         if (treeRoot == null) {
             treeRoot = new TFNode();
             
-            treeRoot.addItem(0, insert);
+            treeRoot.addItem(0, insertItem);
         }
         else {
 			int insertIndex = ffgtet(treeRoot, key);
 			int tempKey = (int) key;
 			int tempElement = (int) element;
-			Item insertItem;
 			
 			//Shifts items in the node over
 			for (int i = insertIndex; i < treeRoot.getNumItems(); ++i) {
@@ -132,8 +131,32 @@ public class TwoFourTree implements Dictionary {
 			insertItem = new Item(tempKey, tempElement);
 			treeRoot.addItem(treeRoot.getNumItems(), insertItem);
 			
+			//Overflow logic
 			if (treeRoot.getNumItems() > treeRoot.getMaxItems()) {
-				//Do overflow handling.
+				tempKey = (int) (treeRoot.getItem(2)).key();
+				tempElement = (int) (treeRoot.getItem(2)).element();
+				TFNode newNode = new TFNode();
+				
+				newNode.addItem(0, treeRoot.getItem(3));
+				
+				//Shifts items in the node over
+				for (int i = insertIndex; i < treeRoot.getNumItems(); ++i) {
+					//Make item from tempKey and tempElement.
+					insertItem = new Item(tempKey, tempElement);
+
+					//Must keep key and element as ints to avoid
+					//pointer confusion.
+					tempKey = (int) (treeRoot.getItem(i).key());
+					tempElement = (int) (treeRoot.getItem(i).element());
+
+					treeRoot.replaceItem(i, insertItem);
+				}
+				
+				insertItem = new Item(key, element);
+				treeRoot.setChild(1, newNode);
+				newNode.addItem(0, treeRoot.removeItem(3));
+				newNode.addItem(1, insertItem);
+				treeRoot.removeItem(2);
 			}
 		}
     }
