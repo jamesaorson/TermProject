@@ -9,6 +9,10 @@ package termproject;
  * Summary of Modifications
  *      3 Dec 2009 - DMG - changed type for data stored in TFNode to Item
  *          and changed necessary methods to deal with Item instead of Object
+ *		6 Dec 2016 - JAO - Moved wcit() and ffgtet() into this. Left off access
+ *			modifier because we wanted it visible within the package. Also added
+ *			isExternal() method.
+ *		
  * Description: The basic node for a 2-4 tree.  Contains an array of Items,
  * an array of references to children TFNodes, a pointer to a parent TFNode,
  * and a count of how many Items are stored in the node.
@@ -133,4 +137,42 @@ public class TFNode {
             throw new TFNodeException();
         nodeChildren[index] = child;
     }
+	
+	/**
+      * 
+      * @return index showing 
+      */
+    int wcit() {
+        if (nodeParent == null) {
+            return -1;
+        }
+        else {
+			//Runs through parent's child array comparing pointers to find out
+			//what index of its child array node is in.
+            for (int i = 0; i < nodeParent.getNumItems() + 1; ++i) {
+                if (this == nodeParent.getChild(i)) {
+                    return i;
+                }
+            }
+            
+            throw new ElementNotFoundException("Something is wrong in wcit()");            
+        }
+    }
+    
+    static int ffgtet(TFNode node, Object key, Comparator comp){
+        // go through the node item array and return insert point
+        for (int i = 0; i < node.getNumItems(); i++){
+            if (!comp.isLessThan(node.getItem(i).key(), key)){
+                return i;
+            }
+        }
+		
+        // if we haven't returned at this point, the insert point is at the
+        // first unoccupied index.
+        return node.getNumItems();
+	}
+	
+	public boolean isExternal() {
+		return nodeChildren[0] == null;
+	}
 }

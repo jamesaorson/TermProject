@@ -71,7 +71,7 @@ public class TwoFourTree implements Dictionary {
 		while(!isFinished){
 			
 			// index of element or child we will be using.
-			int index = ffgtet(currentNode, key);
+			int index = TFNode.ffgtet(currentNode, key, treeComp);
 			Object currentKey = currentNode.getItem(index).key();
 			
 			// if the thing at index equals the incoming key
@@ -113,19 +113,57 @@ public class TwoFourTree implements Dictionary {
 			treeRoot.addItem(0, insertItem);
 		}
 		else {
-			int insertIndex =-1;
 			TFNode currNode = treeRoot;
+			int insertIndex = TFNode.ffgtet(currNode, key, treeComp);
 			
 			//Finds the node we will be inserting into.
-			while (insertIndex != currNode.getNumItems()) {
-				insertIndex = ffgtet(currNode, key);
+			while (insertIndex <= currNode.getNumItems()
+				   && !currNode.isExternal()) {
 				
-				if (currNode.getChild(0) != null) {
-					currNode = currNode.getChild(insertIndex);
+				insertIndex = TFNode.ffgtet(currNode, key, treeComp);
+				//Going to look down child of insertIndex to find exact insert
+				//node. If either ending condition is met, we will insert
+				//at insertIndex of currNode.
+				currNode = currNode.getChild(insertIndex);
+			}
+			insertIndex = TFNode.ffgtet(currNode, key, treeComp);
+			currNode.insertItem(insertIndex, insertItem);
+			
+			while (currNode.getNumItems() > currNode.getMaxItems()) {
+				TFNode parent = currNode.getParent();
+				int tempKey = (int) currNode.getItem(2).key();
+				int tempElement = (int) currNode.getItem(2).element();
+				TFNode newNode = new TFNode();
+				
+				newNode.addItem(0, currNode.removeItem(3));
+				
+				//If there is no parent, we are at root and must make a new one.
+				if (parent == null) {
+					parent = new TFNode();
+					currNode.setParent(parent);
+					parent.setChild(0, currNode);
+					setRoot(parent);
 				}
-				else {
-					break;
+				
+				insertItem = new Item(tempKey, tempElement);	
+				parent.insertItem(currNode.wcit(), insertItem);
+				
+				//Hook up newNode
+				parent.setChild(1, newNode);
+				newNode.setParent(parent);
+				//Hook up child d and e with newNode as parents
+				if (currNode.getChild(3) != null) {
+					newNode.setChild(0, currNode.getChild(3));
+					currNode.setChild(3, null);
 				}
+				if (currNode.getChild(4) != null) {
+					newNode.setChild(1, currNode.getChild(4));
+					currNode.setChild(4, null);
+				}
+				//Deletes items that are now in newNode, from currNode.
+				currNode.deleteItem(2);
+				//Allows us to check parent for overflow.
+				currNode = parent;
 			}
 		}
 		
@@ -242,7 +280,7 @@ public class TwoFourTree implements Dictionary {
 		while(!isFinished){
 			
 			// index of element or child we will be using.
-			int index = ffgtet(currentNode, key);
+			int index = TFNode.ffgtet(currentNode, key, treeComp);
 			Object currentKey = currentNode.getItem(index).key();
 			
 			// if the key of item at index equals the incoming key
@@ -325,48 +363,6 @@ public class TwoFourTree implements Dictionary {
         
         System.out.println();
     }
-
-    /**
-      * 
-      * @param node 
-      * @return index showing 
-      */
-    private int wcit(TFNode node) {
-        if (node == null) {
-            throw new TFNodeException("TFNode was null");
-        }
-        
-        TFNode parent = node.getParent();
-        
-        if (parent == null) {
-            //This may be an unnecessary method
-            return -1;
-        }
-        else {
-			//Runs through parent's child array comparing pointers to find out
-			//what index of its child array node is in.
-            for (int i = 0; i < parent.getNumItems() + 1; ++i) {
-                if (node == parent.getChild(i)) {
-                    return i;
-                }
-            }
-            
-            throw new ElementNotFoundException("Something is wrong in wcit()");            
-        }
-    }
-    
-    private int ffgtet(TFNode node, Object key){
-        // go through the node item array and return insert point
-        for (int i = 0; i < node.getNumItems(); i++){
-            if (!treeComp.isLessThan(node.getItem(i).key(), key)){
-                return i;
-            }
-        }
-		
-        // if we haven't returned at this point, the insert point is at the
-        // first unoccupied index.
-        return node.getNumItems();
-	}
     
     // checks if tree is properly hooked up, i.e., children point to parents
     public void checkTree() {
@@ -438,7 +434,7 @@ public class TwoFourTree implements Dictionary {
         Integer myInt3 = new Integer(22);
         myTree.insertElement(myInt3, myInt3);
 		
-        /*Integer myInt4 = new Integer(16);
+        Integer myInt4 = new Integer(16);
         myTree.insertElement(myInt4, myInt4);
 
         Integer myInt5 = new Integer(49);
@@ -453,7 +449,7 @@ public class TwoFourTree implements Dictionary {
         Integer myInt8 = new Integer(3);
         myTree.insertElement(myInt8, myInt8);
 
-        Integer myInt9 = new Integer(53);
+        /*Integer myInt9 = new Integer(53);
         myTree.insertElement(myInt9, myInt9);
 
         Integer myInt10 = new Integer(66);
