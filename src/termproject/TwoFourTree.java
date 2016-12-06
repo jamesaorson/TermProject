@@ -125,133 +125,16 @@ public class TwoFourTree implements Dictionary {
 				//node. If either ending condition is met, we will insert
 				//at insertIndex of currNode.
 				currNode = currNode.getChild(insertIndex);
+				
+				if (currNode == null) {
+					currNode = new TFNode();
+				}
 			}
 			insertIndex = TFNode.ffgtet(currNode, key, treeComp);
 			currNode.insertItem(insertIndex, insertItem);
 			
-			while (currNode.getNumItems() > currNode.getMaxItems()) {
-				TFNode parent = currNode.getParent();
-				int tempKey = (int) currNode.getItem(2).key();
-				int tempElement = (int) currNode.getItem(2).element();
-				TFNode newNode = new TFNode();
-				
-				newNode.addItem(0, currNode.removeItem(3));
-				
-				//If there is no parent, we are at root and must make a new one.
-				if (parent == null) {
-					parent = new TFNode();
-					currNode.setParent(parent);
-					parent.setChild(0, currNode);
-					setRoot(parent);
-				}
-				
-				insertItem = new Item(tempKey, tempElement);	
-				parent.insertItem(currNode.wcit(), insertItem);
-				
-				//Hook up newNode
-				parent.setChild(1, newNode);
-				newNode.setParent(parent);
-				//Hook up child d and e with newNode as parents
-				if (currNode.getChild(3) != null) {
-					newNode.setChild(0, currNode.getChild(3));
-					currNode.setChild(3, null);
-				}
-				if (currNode.getChild(4) != null) {
-					newNode.setChild(1, currNode.getChild(4));
-					currNode.setChild(4, null);
-				}
-				//Deletes items that are now in newNode, from currNode.
-				currNode.deleteItem(2);
-				//Allows us to check parent for overflow.
-				currNode = parent;
-			}
+			overflow(currNode);
 		}
-		
-        /*Item insertItem = new Item(key, element);
-        
-        if (treeRoot == null) {
-            treeRoot = new TFNode();
-            
-            treeRoot.addItem(0, insertItem);
-        }
-        else {
-			int insertIndex = -1;
-			TFNode currNode = treeRoot;
-			
-			while (insertIndex != currNode.getNumItems()) {
-				insertIndex = ffgtet(currNode, key);
-				
-				if (currNode.getChild(0) != null) {
-					currNode = currNode.getChild(insertIndex);
-				}
-				else {
-					break;
-				}
-			}
-			
-			int tempKey = (int) key;
-			int tempElement = (int) element;
-			
-			//Shifts items in the node over
-			for (int i = insertIndex; i < currNode.getNumItems(); ++i) {
-				//Make item from tempKey and tempElement.
-				insertItem = new Item(tempKey, tempElement);
-				
-				//Must keep key and element as ints to avoid
-				//pointer confusion.
-				tempKey = (int) (currNode.getItem(i).key());
-				tempElement = (int) (currNode.getItem(i).element());
-				
-				currNode.replaceItem(i, insertItem);
-			}
-			
-			//Adds last item in for shift process.
-			insertItem = new Item(tempKey, tempElement);
-			currNode.addItem(currNode.getNumItems(), insertItem);
-			
-			//Overflow logic
-			while (currNode.getNumItems() > currNode.getMaxItems()) {
-				TFNode parent = currNode.getParent();
-				
-				tempKey = (int) (currNode.getItem(2)).key();
-				tempElement = (int) (currNode.getItem(2)).element();
-				TFNode newNode = new TFNode();
-				
-				newNode.addItem(0, currNode.getItem(3));
-				
-				if (parent == null) {
-					parent = new TFNode();
-					currNode.setParent(parent);
-					parent.setChild(0, currNode);
-					setRoot(parent);
-					
-					insertItem = new Item(tempKey, tempElement);
-					
-					parent.addItem(0, insertItem);
-				}
-				else {
-					//Shifts items in the node over
-					for (int i = 0; i < parent.getNumItems(); ++i) {
-						//Make item from tempKey and tempElement.
-						insertItem = new Item(tempKey, tempElement);
-
-						//Must keep key and element as ints to avoid
-						//pointer confusion.
-						tempKey = (int) (parent.getItem(i).key());
-						tempElement = (int) (parent.getItem(i).element());
-
-						parent.replaceItem(i, insertItem);
-					}
-				}
-					
-				parent.setChild(1, newNode);
-				newNode.addItem(1, newNode.getItem(0));
-				newNode.replaceItem(0, insertItem);
-				newNode.setParent(parent);
-				currNode.removeItem(2);
-				currNode = parent;
-			}
-		}*/
     }
 
     /**
@@ -423,6 +306,46 @@ public class TwoFourTree implements Dictionary {
         }
     }
 	
+	private void overflow(TFNode currNode) {
+		while (currNode.getNumItems() > currNode.getMaxItems()) {
+				Item tempItem = currNode.getItem(2);
+				TFNode parent = currNode.getParent();
+				TFNode newNode = new TFNode();
+				
+				newNode.addItem(0, currNode.getItem(3));
+				
+				//If there is no parent, we are at root and must make a new one.
+				if (parent == null) {
+					parent = new TFNode();
+					currNode.setParent(parent);
+					parent.setChild(0, currNode);
+					setRoot(parent);
+				}
+				
+				parent.insertItem(currNode.wcit(), tempItem);
+				
+				//Hook up newNode
+				parent.setChild(currNode.wcit() + 1, newNode);
+				newNode.setParent(parent);
+				
+				//Hook up child d and e with newNode as parents
+				if (currNode.getChild(3) != null) {
+					newNode.setChild(0, currNode.getChild(3));
+					currNode.setChild(3, null);
+				}
+				if (currNode.getChild(4) != null) {
+					newNode.setChild(1, currNode.getChild(4));
+					currNode.setChild(4, null);
+				}
+				
+				//Deletes item that is now in newNode, from currNode.
+				currNode.deleteItem(3);
+				currNode.deleteItem(2);
+				//Allows us to check parent for overflow.
+				currNode = parent;
+			}
+	}
+	
 	public static void main(String[] args) {
         Comparator myComp = new IntegerComparator();
         TwoFourTree myTree = new TwoFourTree(myComp);
@@ -449,7 +372,7 @@ public class TwoFourTree implements Dictionary {
         Integer myInt8 = new Integer(3);
         myTree.insertElement(myInt8, myInt8);
 
-        /*Integer myInt9 = new Integer(53);
+        Integer myInt9 = new Integer(53);
         myTree.insertElement(myInt9, myInt9);
 
         Integer myInt10 = new Integer(66);
@@ -467,13 +390,15 @@ public class TwoFourTree implements Dictionary {
         Integer myInt14 = new Integer(88);
         myTree.insertElement(myInt14, myInt14);
 
+		//Lost 49, 53, and 66
         Integer myInt15 = new Integer(1);
         myTree.insertElement(myInt15, myInt15);
 
-        Integer myInt16 = new Integer(97);
+		//Lost 97
+        /*Integer myInt16 = new Integer(97);
         myTree.insertElement(myInt16, myInt16);
 
-        Integer myInt17 = new Integer(94);
+        /*Integer myInt17 = new Integer(94);
         myTree.insertElement(myInt17, myInt17);
 
         Integer myInt18 = new Integer(35);
