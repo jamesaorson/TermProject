@@ -392,7 +392,25 @@ public class TwoFourTree implements Dictionary {
 	}
 	
 	private void rightTransfer(TFNode node, TFNode parent, TFNode rightSib) {
+		/*
+		Transfer with right sibling - else if right sibling has 2 or 3 items.
+            Move leftmost item of sibling to be the parent item, then move 
+            parent item into the underflowed node.
+            Do a shifting insert, moving leftmost child right sibling to the
+            right child of the underflowed node.
+		*/
 		
+		// move items
+		Item leftmostItemOfSib = rightSib.getItem(0);
+		Item parentItem = parent.getItem(node.wcit());
+		parent.replaceItem(node.wcit(), leftmostItemOfSib);
+		node.addItem(0, parentItem);
+		
+		// set node's right child to leftmost child of right sib
+		node.setChild(1, rightSib.getChild(0));
+		
+		// remove leftmost item which also shifts items and children
+		node.removeItem(0);
 	}
 	
 	private void leftFusion(TFNode node, TFNode parent, TFNode leftSib) {
@@ -400,6 +418,12 @@ public class TwoFourTree implements Dictionary {
 	}
 	
 	private void rightFusion(TFNode node, TFNode parent, TFNode rightSib) {
+		/*
+		Fusion with right sibling - else.
+            What child am I? Pull down (me) parent item (shifting remove)
+            to left spot of right sibling. Move child of underflowed node to
+            the left child of the right sibling. Check for underflow of parent.
+		*/
 		
 	}
 	
