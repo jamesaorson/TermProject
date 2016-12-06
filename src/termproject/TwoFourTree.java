@@ -103,11 +103,33 @@ public class TwoFourTree implements Dictionary {
         if (!treeComp.isComparable(key)) {
             throw new InvalidIntegerException("Key was not an integer");
         }
-        if (!treeComp.isComparable(element)) {
-            throw new InvalidIntegerException("Element was not an integer");
-        }
         
-        Item insertItem = new Item(key, element);
+		Item insertItem = new Item(key, element);
+		
+		//If there is no root yet, make the element a new root.
+		if (treeRoot == null) {
+			treeRoot = new TFNode();
+			
+			treeRoot.addItem(0, insertItem);
+		}
+		else {
+			int insertIndex =-1;
+			TFNode currNode = treeRoot;
+			
+			//Finds the node we will be inserting into.
+			while (insertIndex != currNode.getNumItems()) {
+				insertIndex = ffgtet(currNode, key);
+				
+				if (currNode.getChild(0) != null) {
+					currNode = currNode.getChild(insertIndex);
+				}
+				else {
+					break;
+				}
+			}
+		}
+		
+        /*Item insertItem = new Item(key, element);
         
         if (treeRoot == null) {
             treeRoot = new TFNode();
@@ -191,7 +213,7 @@ public class TwoFourTree implements Dictionary {
 				currNode.removeItem(2);
 				currNode = parent;
 			}
-		}
+		}*/
     }
 
     /**
