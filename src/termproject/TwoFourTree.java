@@ -366,6 +366,42 @@ public class TwoFourTree implements Dictionary {
 			currNode = parent;
 		}
 	}
+		
+	private void underflow(TFNode node) {
+		TFNode parent = node.getParent();
+		int index = node.wcit();
+		
+		if (index > 0 && parent.getChild(index - 1).getNumItems() >= 2) {
+			leftTransfer(node, parent, parent.getChild(index - 1));
+		}
+		else if (index < parent.getNumItems() - 1
+				 && parent.getChild(index + 1).getNumItems() >= 2) {
+			
+			rightTransfer(node, parent, parent.getChild(index + 1));
+		}
+		else if (index > 0) {
+			leftFusion(node, parent, parent.getChild(index - 1));
+		}
+		else {
+			rightFusion(node, parent, parent.getChild(index + 1));
+		}
+	}
+	
+	private void leftTransfer(TFNode node, TFNode parent, TFNode leftSib) {
+		
+	}
+	
+	private void rightTransfer(TFNode node, TFNode parent, TFNode rightSib) {
+		
+	}
+	
+	private void leftFusion(TFNode node, TFNode parent, TFNode leftSib) {
+		
+	}
+	
+	private void rightFusion(TFNode node, TFNode parent, TFNode rightSib) {
+		
+	}
 	
 	public static void main(String[] args) {
         Comparator myComp = new IntegerComparator();
