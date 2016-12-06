@@ -36,10 +36,12 @@ public class TwoFourTree implements Dictionary {
         treeRoot = root;
     }
 
+	@Override
     public int size() {
         return size;
     }
 
+	@Override
     public boolean isEmpty() {
         return (size == 0);
     }
@@ -49,6 +51,7 @@ public class TwoFourTree implements Dictionary {
       * @param key to be searched for
       * @return object corresponding to key; null if not found
       */
+	@Override
     public Object findElement(Object key) {
         if (!treeComp.isComparable(key)) {
             throw new InvalidIntegerException("Key was not an integer");
@@ -94,6 +97,7 @@ public class TwoFourTree implements Dictionary {
       * @param key of object to be inserted
       * @param element to be inserted
       */
+	@Override
     public void insertElement(Object key, Object element) {
         if (!treeComp.isComparable(key)) {
             throw new InvalidIntegerException("Key was not an integer");
@@ -168,12 +172,66 @@ public class TwoFourTree implements Dictionary {
       * @return object corresponding to key
       * @exception ElementNotFoundException if the key is not in dictionary
       */
+	@Override
     public Object removeElement(Object key) throws ElementNotFoundException {
         if (!treeComp.isComparable(key)) {
             throw new InvalidIntegerException("Key was not an integer");
         }
-        
-        return null;
+		
+		// object that will get returned.
+		Object result = null;
+		
+		// node for walking tree.
+		TFNode currentNode = treeRoot;
+		
+		// while loop varible.
+		boolean isFinished = false;
+		
+		// while we haven't found the item or gotten to bottom of tree,
+		while(!isFinished){
+			
+			// index of element or child we will be using.
+			int index = ffgtet(currentNode, key);
+			Object currentKey = currentNode.getItem(index).key();
+			
+			// if the key of item at index equals the incoming key
+			if(treeComp.isEqual(currentKey, key)){
+				// set result, remove from tree, and break.
+				result = currentNode.getItem(index);
+				deleteElement(currentNode, index);
+				isFinished = true;
+			}else{
+				TFNode nextNode = currentNode.getChild(index);
+				if(nextNode == null){
+					// item isn't in tree so break resulting in a null return.
+					isFinished = true;
+				}else{
+					// walk down tree.
+					currentNode = nextNode;
+				}
+			}
+		}
+        return result;
+	}
+	
+	private void deleteElement(TFNode node, int index){
+		// if node is a leaf
+		if(node.getChild(0) == null){
+			// null item at index
+			node.removeItem(index);
+		}else{ // node is not a leaf
+			// swap with inorder successor
+			
+			// walk through tree to inorder successor
+			TFNode successor = node.getChild(index + 1);
+			while(successor.getChild(0) != null){
+				successor = successor.getChild(0);
+			}
+			node.replaceItem(index, successor.getItem(0));
+		}
+
+		// check for underflow
+
 	}
 
     public void printAllElements() {
