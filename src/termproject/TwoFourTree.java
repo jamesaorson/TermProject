@@ -114,53 +114,81 @@ public class TwoFourTree implements Dictionary {
             treeRoot.addItem(0, insertItem);
         }
         else {
-			int insertIndex = ffgtet(treeRoot, key);
+			int insertIndex = -1;
+			TFNode currNode = treeRoot;
+			
+			while (insertIndex != currNode.getNumItems()) {
+				insertIndex = ffgtet(currNode, key);
+				
+				if (currNode.getChild(0) != null) {
+					currNode = currNode.getChild(insertIndex);
+				}
+				else {
+					break;
+				}
+			}
+			
 			int tempKey = (int) key;
 			int tempElement = (int) element;
 			
 			//Shifts items in the node over
-			for (int i = insertIndex; i < treeRoot.getNumItems(); ++i) {
+			for (int i = insertIndex; i < currNode.getNumItems(); ++i) {
 				//Make item from tempKey and tempElement.
 				insertItem = new Item(tempKey, tempElement);
 				
 				//Must keep key and element as ints to avoid
 				//pointer confusion.
-				tempKey = (int) (treeRoot.getItem(i).key());
-				tempElement = (int) (treeRoot.getItem(i).element());
+				tempKey = (int) (currNode.getItem(i).key());
+				tempElement = (int) (currNode.getItem(i).element());
 				
-				treeRoot.replaceItem(i, insertItem);
+				currNode.replaceItem(i, insertItem);
 			}
 			
 			//Adds last item in for shift process.
 			insertItem = new Item(tempKey, tempElement);
-			treeRoot.addItem(treeRoot.getNumItems(), insertItem);
+			currNode.addItem(currNode.getNumItems(), insertItem);
 			
 			//Overflow logic
-			if (treeRoot.getNumItems() > treeRoot.getMaxItems()) {
-				tempKey = (int) (treeRoot.getItem(2)).key();
-				tempElement = (int) (treeRoot.getItem(2)).element();
+			while (currNode.getNumItems() > currNode.getMaxItems()) {
+				TFNode parent = currNode.getParent();
+				
+				tempKey = (int) (currNode.getItem(2)).key();
+				tempElement = (int) (currNode.getItem(2)).element();
 				TFNode newNode = new TFNode();
 				
-				newNode.addItem(0, treeRoot.getItem(3));
+				newNode.addItem(0, currNode.getItem(3));
 				
-				//Shifts items in the node over
-				for (int i = insertIndex; i < treeRoot.getNumItems(); ++i) {
-					//Make item from tempKey and tempElement.
+				if (parent == null) {
+					parent = new TFNode();
+					currNode.setParent(parent);
+					parent.setChild(0, currNode);
+					setRoot(parent);
+					
 					insertItem = new Item(tempKey, tempElement);
-
-					//Must keep key and element as ints to avoid
-					//pointer confusion.
-					tempKey = (int) (treeRoot.getItem(i).key());
-					tempElement = (int) (treeRoot.getItem(i).element());
-
-					treeRoot.replaceItem(i, insertItem);
+					
+					parent.addItem(0, insertItem);
 				}
-				
-				insertItem = new Item(key, element);
-				treeRoot.setChild(1, newNode);
-				newNode.addItem(0, treeRoot.removeItem(3));
-				newNode.addItem(1, insertItem);
-				treeRoot.removeItem(2);
+				else {
+					//Shifts items in the node over
+					for (int i = 0; i < parent.getNumItems(); ++i) {
+						//Make item from tempKey and tempElement.
+						insertItem = new Item(tempKey, tempElement);
+
+						//Must keep key and element as ints to avoid
+						//pointer confusion.
+						tempKey = (int) (parent.getItem(i).key());
+						tempElement = (int) (parent.getItem(i).element());
+
+						parent.replaceItem(i, insertItem);
+					}
+				}
+					
+				parent.setChild(1, newNode);
+				newNode.addItem(1, newNode.getItem(0));
+				newNode.replaceItem(0, insertItem);
+				newNode.setParent(parent);
+				currNode.removeItem(2);
+				currNode = parent;
 			}
 		}
     }
@@ -386,7 +414,7 @@ public class TwoFourTree implements Dictionary {
         Integer myInt3 = new Integer(22);
         myTree.insertElement(myInt3, myInt3);
 
-        /*Integer myInt4 = new Integer(16);
+        Integer myInt4 = new Integer(16);
         myTree.insertElement(myInt4, myInt4);
 
         Integer myInt5 = new Integer(49);
@@ -432,7 +460,7 @@ public class TwoFourTree implements Dictionary {
         myTree.insertElement(myInt18, myInt18);
 
         Integer myInt19 = new Integer(51);
-        myTree.insertElement(myInt19, myInt19);*/
+        myTree.insertElement(myInt19, myInt19);
 
         myTree.printAllElements();
         System.out.println("done");
