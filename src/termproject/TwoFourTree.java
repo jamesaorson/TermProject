@@ -282,6 +282,7 @@ public class TwoFourTree implements Dictionary {
 		}
 
 		// check for underflow
+		
 
 	}
 
@@ -436,7 +437,7 @@ public class TwoFourTree implements Dictionary {
         myTree.insertElement(myInt2, myInt2);
         Integer myInt3 = new Integer(22);
         myTree.insertElement(myInt3, myInt3);
-
+		
         /*Integer myInt4 = new Integer(16);
         myTree.insertElement(myInt4, myInt4);
 
