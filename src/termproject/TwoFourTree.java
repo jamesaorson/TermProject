@@ -171,7 +171,14 @@ public class TwoFourTree implements Dictionary {
 			// index of element or child we will be using.
 			int index = TFNode.ffgtet(currentNode, key, treeComp);
 			
-			Item currentItem = currentNode.getItem(index);
+			Item currentItem;
+			
+			if (index == currentNode.getNumItems()) {
+				currentItem = null;
+			}
+			else {
+				currentItem = currentNode.getItem(index);
+			}
 
 			// if the key of item at index equals the incoming key
 			if(currentItem != null && treeComp.isEqual(currentItem.key(), key)){
@@ -182,12 +189,11 @@ public class TwoFourTree implements Dictionary {
 			}else{
 				TFNode nextNode = currentNode.getChild(index);
 				if(nextNode == null){
-						// item isn't in tree so break resulting in a null return.
-						isFinished = true;
-						return null;
+					// item isn't in tree so break resulting in a null return.
+					return null;
 				}else{
-						// walk down tree.
-						currentNode = nextNode;
+					// walk down tree.
+					currentNode = nextNode;
 				}
 			}
         }
@@ -478,7 +484,7 @@ public class TwoFourTree implements Dictionary {
         Comparator myComp = new IntegerComparator();
         TwoFourTree myTree = new TwoFourTree(myComp);
 
-        Integer myInt1 = new Integer(47);
+        /*Integer myInt1 = new Integer(47);
         myTree.insertElement(myInt1, myInt1);
         Integer myInt2 = new Integer(83);
         myTree.insertElement(myInt2, myInt2);
@@ -534,28 +540,29 @@ public class TwoFourTree implements Dictionary {
         myTree.insertElement(myInt19, myInt19);
 
         myTree.printAllElements();
-        System.out.println("done");
+        System.out.println("done");*/
 
-        /*myTree = new TwoFourTree(myComp);
-        final int TEST_SIZE = 10000;
+        myTree = new TwoFourTree(myComp);
+        final int TEST_SIZE = 23;
 
 
         for (int i = 0; i < TEST_SIZE; i++) {
             myTree.insertElement(new Integer(i), new Integer(i));
             //myTree.printAllElements();
-            //myTree.checkTree();
-        }*
+            myTree.checkTree();
+        }
         
-        System.out.println("removing");
+        /*System.out.println("removing");
         
         for (int i = 0; i < TEST_SIZE; i++) {
-            int out = (Integer) myTree.removeElement(new Integer(i));
-        
+			System.out.println(i);
+			int out = (Integer) ((Item) myTree.removeElement(new Integer(i))).key();
+			
             if (out != i) {
                 throw new TwoFourTreeException("main: wrong element removed");
             }
             if (i > (TEST_SIZE - 15)) {
-                myTree.printAllElements();
+                //myTree.printAllElements();
             }
         }*/
         
