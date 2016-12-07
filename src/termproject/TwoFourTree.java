@@ -170,12 +170,13 @@ public class TwoFourTree implements Dictionary {
 
 			// index of element or child we will be using.
 			int index = TFNode.ffgtet(currentNode, key, treeComp);
-			Object currentKey = currentNode.getItem(index).key();
+			
+			Item currentItem = currentNode.getItem(index);
 
 			// if the key of item at index equals the incoming key
-			if(treeComp.isEqual(currentKey, key)){
+			if(currentItem != null && treeComp.isEqual(currentItem.key(), key)){
 				// set result, remove from tree, and break.
-				result = currentNode.getItem(index);
+				result = currentItem;
 				deleteElement(currentNode, index);
 				isFinished = true;
 			}else{
@@ -183,6 +184,7 @@ public class TwoFourTree implements Dictionary {
 				if(nextNode == null){
 						// item isn't in tree so break resulting in a null return.
 						isFinished = true;
+						return null;
 				}else{
 						// walk down tree.
 						currentNode = nextNode;
