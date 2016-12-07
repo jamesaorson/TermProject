@@ -419,6 +419,7 @@ public class TwoFourTree implements Dictionary {
 		node.addItem(0, parentItem);
 		
 		// set node's right child to leftmost child of right sib
+		rightSib.getChild(0).setParent(node);
 		node.setChild(1, rightSib.getChild(0));
 		
 		// remove leftmost item which also shifts items and children
@@ -438,6 +439,15 @@ public class TwoFourTree implements Dictionary {
             to left spot of right sibling. Move child of underflowed node to
             the left child of the right sibling. Check for underflow of parent.
 		*/
+		// remove item from parent at node's index
+		Item parentItem = parent.removeItem(node.wcit());
+		// null parent pointer of node
+		node.setParent(null);
+		// insert parent item into rightChild at index 0. This shifts stuff also.
+		rightSib.insertItem(0, parentItem);
+		// put child of node into child[0] of right sib
+		rightSib.setChild(0, node.getChild(0));
+		node.setChild(0, null);
 		
 	}
 	
