@@ -17,11 +17,13 @@ package termproject;
   *                         Need to make major changes to insert still.
   *		05 Dec 2016 - STG - Added ffgtet()
   *	                        Completed findElement()
+  *		06 Dec 2016 - JAO - InsertElement() is now fully functional. Overflow()
+  *							also works for all cases.
   * 
   * Description: 
   */
 public class TwoFourTree implements Dictionary {
-	private Comparator treeComp;
+    private Comparator treeComp;
     private int size = 0;
     private TFNode treeRoot = null;
 
@@ -104,37 +106,40 @@ public class TwoFourTree implements Dictionary {
             throw new InvalidIntegerException("Key was not an integer");
         }
         
-		Item insertItem = new Item(key, element);
-		
-		//If there is no root yet, make the element a new root.
-		if (treeRoot == null) {
+        Item insertItem = new Item(key, element);
+
+        //If there is no root yet, make the element into the root.
+        if (treeRoot == null) {
 			treeRoot = new TFNode();
-			
+
 			treeRoot.addItem(0, insertItem);
-		}
-		else {
+        }
+        else {
 			TFNode currNode = treeRoot;
 			int insertIndex = TFNode.ffgtet(currNode, key, treeComp);
-			
+
 			//Finds the node we will be inserting into.
 			while (insertIndex <= currNode.getNumItems()
 				   && !currNode.isExternal()) {
-				
+
 				insertIndex = TFNode.ffgtet(currNode, key, treeComp);
-				//Going to look down child of insertIndex to find exact insert
+				//Looks down child of insertIndex to find exact insert
 				//node. If either ending condition is met, we will insert
 				//at insertIndex of currNode.
 				currNode = currNode.getChild(insertIndex);
-				
+
 				if (currNode == null) {
 					currNode = new TFNode();
 				}
 			}
-			insertIndex = TFNode.ffgtet(currNode, key, treeComp);
-			currNode.insertItem(insertIndex, insertItem);
 			
+			insertIndex = TFNode.ffgtet(currNode, key, treeComp);
+			currNode.insertItem(insertIndex, insertItem);			
+
 			overflow(currNode);
-		}
+        }
+        
+        ++size;
     }
 
     /**
@@ -149,23 +154,23 @@ public class TwoFourTree implements Dictionary {
         if (!treeComp.isComparable(key)) {
             throw new InvalidIntegerException("Key was not an integer");
         }
-		
-		// object that will get returned.
-		Object result = null;
-		
-		// node for walking tree.
-		TFNode currentNode = treeRoot;
-		
-		// while loop varible.
-		boolean isFinished = false;
-		
-		// while we haven't found the item or gotten to bottom of tree,
-		while(!isFinished){
-			
+
+        // object that will get returned.
+        Object result = null;
+
+        // node for walking tree.
+        TFNode currentNode = treeRoot;
+
+        // while loop varible.
+        boolean isFinished = false;
+
+        // while we haven't found the item or gotten to bottom of tree,
+        while(!isFinished){
+
 			// index of element or child we will be using.
 			int index = TFNode.ffgtet(currentNode, key, treeComp);
 			Object currentKey = currentNode.getItem(index).key();
-			
+
 			// if the key of item at index equals the incoming key
 			if(treeComp.isEqual(currentKey, key)){
 				// set result, remove from tree, and break.
@@ -175,37 +180,39 @@ public class TwoFourTree implements Dictionary {
 			}else{
 				TFNode nextNode = currentNode.getChild(index);
 				if(nextNode == null){
-					// item isn't in tree so break resulting in a null return.
-					isFinished = true;
+						// item isn't in tree so break resulting in a null return.
+						isFinished = true;
 				}else{
-					// walk down tree.
-					currentNode = nextNode;
+						// walk down tree.
+						currentNode = nextNode;
 				}
 			}
-		}
+        }
+        --size;
+        
         return result;
-	}
+    }
 	
-	private void deleteElement(TFNode node, int index){
-		// if node is a leaf
-		if(node.getChild(0) == null){
-			// null item at index
-			node.removeItem(index);
-		}else{ // node is not a leaf
-			// swap with inorder successor
-			
-			// walk through tree to inorder successor
-			TFNode successor = node.getChild(index + 1);
-			while(successor.getChild(0) != null){
-				successor = successor.getChild(0);
-			}
-			node.replaceItem(index, successor.getItem(0));
-		}
+    private void deleteElement(TFNode node, int index){
+        // if node is a leaf
+        if(node.getChild(0) == null){
+            // null item at index
+            node.removeItem(index);
+        }else{ // node is not a leaf
+                // swap with inorder successor
 
-		// check for underflow
-		
+            // walk through tree to inorder successor
+            TFNode successor = node.getChild(index + 1);
+            while(successor.getChild(0) != null){
+                    successor = successor.getChild(0);
+            }
+            node.replaceItem(index, successor.getItem(0));
+        }
 
-	}
+        // check for underflow
+
+        --size;
+    }
 
     public void printAllElements() {
         int indent = 0;
@@ -308,42 +315,56 @@ public class TwoFourTree implements Dictionary {
 	
 	private void overflow(TFNode currNode) {
 		while (currNode.getNumItems() > currNode.getMaxItems()) {
-				Item tempItem = currNode.getItem(2);
-				TFNode parent = currNode.getParent();
-				TFNode newNode = new TFNode();
-				
-				newNode.addItem(0, currNode.getItem(3));
-				
-				//If there is no parent, we are at root and must make a new one.
-				if (parent == null) {
-					parent = new TFNode();
-					currNode.setParent(parent);
-					parent.setChild(0, currNode);
-					setRoot(parent);
-				}
-				
+			Item tempItem = currNode.getItem(2);
+			TFNode parent = currNode.getParent();
+			TFNode newNode = new TFNode();
+
+			newNode.addItem(0, currNode.getItem(3));
+
+			//If there is no parent, we are at root and must make a new one.
+			if (parent == null) {
+				parent = new TFNode();
+				parent.addItem(0, tempItem);
+				//Hook up children.
+				parent.setChild(0, currNode);
+				parent.setChild(1, newNode);
+				//Set parent of old root to new root.
+				currNode.setParent(parent);
+				setRoot(parent);
+			}
+			//Otherwise, we will insert based upon our child position.
+			else {
 				parent.insertItem(currNode.wcit(), tempItem);
-				
 				//Hook up newNode
 				parent.setChild(currNode.wcit() + 1, newNode);
-				newNode.setParent(parent);
-				
-				//Hook up child d and e with newNode as parents
-				if (currNode.getChild(3) != null) {
-					newNode.setChild(0, currNode.getChild(3));
-					currNode.setChild(3, null);
-				}
-				if (currNode.getChild(4) != null) {
-					newNode.setChild(1, currNode.getChild(4));
-					currNode.setChild(4, null);
-				}
-				
-				//Deletes item that is now in newNode, from currNode.
-				currNode.deleteItem(3);
-				currNode.deleteItem(2);
-				//Allows us to check parent for overflow.
-				currNode = parent;
 			}
+
+			newNode.setParent(parent);
+
+			//Hook up child d and e with newNode as parents
+			if (currNode.getChild(3) != null) {
+				TFNode temp;
+				newNode.setChild(0, currNode.getChild(3));
+				temp = newNode.getChild(0);
+				temp.setParent(newNode);
+				currNode.setChild(3, null);
+			}
+			if (currNode.getChild(4) != null) {
+				TFNode temp;
+				newNode.setChild(1, currNode.getChild(4));
+				temp = newNode.getChild(1);
+				temp.setParent(newNode);
+				currNode.setChild(4, null);
+			}
+
+			//Deletes items that are now in newNode,
+			//which were previously part of currNode.
+			currNode.deleteItem(3);
+			currNode.deleteItem(2);
+			//Set currNode to parent so we can check if we have 
+			//overflowed the tree again in fixing.
+			currNode = parent;
+		}
 	}
 	
 	public static void main(String[] args) {
@@ -390,22 +411,20 @@ public class TwoFourTree implements Dictionary {
         Integer myInt14 = new Integer(88);
         myTree.insertElement(myInt14, myInt14);
 
-		//Lost 49, 53, and 66
         Integer myInt15 = new Integer(1);
         myTree.insertElement(myInt15, myInt15);
 
-		//Lost 97
-        /*Integer myInt16 = new Integer(97);
+        Integer myInt16 = new Integer(97);
         myTree.insertElement(myInt16, myInt16);
 
-        /*Integer myInt17 = new Integer(94);
+        Integer myInt17 = new Integer(94);
         myTree.insertElement(myInt17, myInt17);
 
         Integer myInt18 = new Integer(35);
         myTree.insertElement(myInt18, myInt18);
 
         Integer myInt19 = new Integer(51);
-        myTree.insertElement(myInt19, myInt19);*/
+        myTree.insertElement(myInt19, myInt19);
 
         myTree.printAllElements();
         System.out.println("done");
