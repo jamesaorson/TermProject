@@ -20,7 +20,7 @@ package termproject;
   *		06 Dec 2016 - JAO - InsertElement() is now fully functional. Overflow()
   *							also works for all cases. Made untested body of
   *							leftTransfer(). Made untested body of leftFusion().
-  * 
+  *     06 Dec 2016 - STG - Added rightTransfer() and rightFusion()
   * Description: 
   */
 public class TwoFourTree implements Dictionary {
