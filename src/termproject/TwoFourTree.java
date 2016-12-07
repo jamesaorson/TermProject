@@ -20,6 +20,9 @@ package termproject;
   *		06 Dec 2016 - JAO - InsertElement() is now fully functional. Overflow()
   *							also works for all cases. Made untested body of
   *							leftTransfer(). Made untested body of leftFusion().
+  *							Fixed issue in removeElement and it worked with 
+  *                         20 elements. There is a new issue in insertElement()
+  *                         when we start inserting 23 elements.
   *     06 Dec 2016 - STG - Added rightTransfer() and rightFusion()
   * Description: 
   */
