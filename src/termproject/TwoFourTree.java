@@ -18,7 +18,8 @@ package termproject;
   *		05 Dec 2016 - STG - Added ffgtet()
   *	                        Completed findElement()
   *		06 Dec 2016 - JAO - InsertElement() is now fully functional. Overflow()
-  *							also works for all cases.
+  *							also works for all cases. Made untested body of
+  *							leftTransfer(). Made untested body of leftFusion().
   * 
   * Description: 
   */
@@ -426,17 +427,28 @@ public class TwoFourTree implements Dictionary {
 	}
 	
 	private void leftFusion(TFNode node, TFNode parent, TFNode leftSib) {
-		//What child am I? Pull down (me - 1) parent item (shifting remove)
-		//to right spot of left sibling. Move child of underflowed node to 
-		//the right child of the left sibling. Check for underflow of parent.
+		//Pull down (me - 1) parent item (shifting remove)
+		//to right spot of left sibling.
+		Item parentItem = parent.removeItem(node.wcit() - 1);
+		
+		leftSib.addItem(leftSib.getNumItems(), parentItem);
+		//Move child of underflowed node to the right child of the left sibling.
+		leftSib.setChild(leftSib.getNumItems(), node.getChild(0));
+		node.setChild(0, null);
+		
+		//Check for underflow of parent.
+		if (parent.getNumItems() == 0) {
+			underflow(parent);
+		}
 	}
 	
 	private void rightFusion(TFNode node, TFNode parent, TFNode rightSib) {
 		/*
 		Fusion with right sibling - else.
             What child am I? Pull down (me) parent item (shifting remove)
-            to left spot of right sibling. Move child of underflowed node to
-            the left child of the right sibling. Check for underflow of parent.
+            to left spot of right sibling (shifting insert). Move child of 
+		    underflowed node to the left child of the right sibling 
+		    (shifting insert). Check for underflow of parent.
 		*/
 		
 	}
