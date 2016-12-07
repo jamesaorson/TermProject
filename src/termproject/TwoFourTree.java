@@ -24,6 +24,8 @@ package termproject;
   *                         20 elements. There is a new issue in insertElement()
   *                         when we start inserting 23 elements.
   *     06 Dec 2016 - STG - Added rightTransfer() and rightFusion()
+  *		07 Dec 2016 - JAO - Fixed insertElement() and two-four tree passes 10000
+  *							element test provided by Dr. Gallagher.
   * Description: 
   */
 public class TwoFourTree implements Dictionary {
@@ -123,22 +125,19 @@ public class TwoFourTree implements Dictionary {
 			int insertIndex = TFNode.ffgtet(currNode, key, treeComp);
 
 			//Finds the node we will be inserting into.
-			while (insertIndex <= currNode.getNumItems()
-				   && !currNode.isExternal()) {
-
-				insertIndex = TFNode.ffgtet(currNode, key, treeComp);
+			while (!currNode.isExternal()) {
 				//Looks down child of insertIndex to find exact insert
-				//node. If either ending condition is met, we will insert
-				//at insertIndex of currNode.
+				//node. If ending condition is met, we will insert at currNode.
 				currNode = currNode.getChild(insertIndex);
 
 				if (currNode == null) {
 					currNode = new TFNode();
 				}
+				
+				insertIndex = TFNode.ffgtet(currNode, key, treeComp);
 			}
 			
-			insertIndex = TFNode.ffgtet(currNode, key, treeComp);
-			currNode.insertItem(insertIndex, insertItem);			
+			currNode.insertItem(insertIndex, insertItem);		
 
 			overflow(currNode);
         }
@@ -356,16 +355,16 @@ public class TwoFourTree implements Dictionary {
 			//Hook up child d and e with newNode as parents
 			if (currNode.getChild(3) != null) {
 				TFNode temp;
-				newNode.setChild(0, currNode.getChild(3));
-				temp = newNode.getChild(0);
+				temp = currNode.getChild(3);
 				temp.setParent(newNode);
+				newNode.setChild(0, temp);
 				currNode.setChild(3, null);
 			}
 			if (currNode.getChild(4) != null) {
 				TFNode temp;
-				newNode.setChild(1, currNode.getChild(4));
-				temp = newNode.getChild(1);
+				temp = currNode.getChild(4);
 				temp.setParent(newNode);
+				newNode.setChild(1, temp);
 				currNode.setChild(4, null);
 			}
 
@@ -378,7 +377,7 @@ public class TwoFourTree implements Dictionary {
 			currNode = parent;
 		}
 	}
-		
+
 	private void underflow(TFNode node) {
 		TFNode parent = node.getParent();
 		int index = node.wcit();
@@ -546,7 +545,7 @@ public class TwoFourTree implements Dictionary {
         System.out.println("done");*/
 
         myTree = new TwoFourTree(myComp);
-        final int TEST_SIZE = 23;
+        final int TEST_SIZE = 10000;
 
 
         for (int i = 0; i < TEST_SIZE; i++) {
@@ -554,12 +553,13 @@ public class TwoFourTree implements Dictionary {
             //myTree.printAllElements();
             myTree.checkTree();
         }
-        
-        /*System.out.println("removing");
+		
+        System.out.println("removing");
         
         for (int i = 0; i < TEST_SIZE; i++) {
-			System.out.println(i);
+			
 			int out = (Integer) ((Item) myTree.removeElement(new Integer(i))).key();
+			myTree.checkTree();
 			
             if (out != i) {
                 throw new TwoFourTreeException("main: wrong element removed");
@@ -567,7 +567,7 @@ public class TwoFourTree implements Dictionary {
             if (i > (TEST_SIZE - 15)) {
                 //myTree.printAllElements();
             }
-        }*/
+        }
         
         System.out.println("done");
     }	
