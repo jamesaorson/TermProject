@@ -1,5 +1,7 @@
 package termproject;
 
+import java.util.Random;
+
 /**
   * 
   *
@@ -67,7 +69,7 @@ public class TwoFourTree implements Dictionary {
         }
 		
 		// object that will get returned.
-		Object result = null;
+		Item result = null;
 		
 		// node for walking tree.
 		TFNode currentNode = treeRoot;
@@ -98,7 +100,12 @@ public class TwoFourTree implements Dictionary {
 				}
 			}
 		}
-		return result;
+		if (result == null) {
+			return null;
+		}
+		else {
+			return result.element();
+		}
     }
 
     /**
@@ -159,7 +166,7 @@ public class TwoFourTree implements Dictionary {
         }
 
         // object that will get returned.
-        Object result = null;
+        Item result = null;
 
         // node for walking tree.
         TFNode currentNode = treeRoot;
@@ -201,7 +208,12 @@ public class TwoFourTree implements Dictionary {
         }
         --size;
         
-        return result;
+		if (result == null) {
+			return null;
+		}
+		else {
+			return result.element();
+		}
     }
 	
     private void deleteElement(TFNode node, int index){
@@ -427,15 +439,18 @@ public class TwoFourTree implements Dictionary {
 		// move items
 		Item leftmostItemOfSib = rightSib.getItem(0);
 		Item parentItem = parent.getItem(node.wcit());
+        //JAO
+        TFNode leftmostChildOfSib = rightSib.getChild(0);
 		parent.replaceItem(node.wcit(), leftmostItemOfSib);
 		node.addItem(0, parentItem);
 		
 		// set node's right child to leftmost child of right sib
-		rightSib.getChild(0).setParent(node);
-		node.setChild(1, rightSib.getChild(0));
+        //JAO - rightSib.getChild(0).setParent(node);
+        leftmostChildOfSib.setParent(node);
+		node.setChild(1, leftmostChildOfSib);
 		
 		// remove leftmost item which also shifts items and children
-		node.removeItem(0);
+		rightSib.removeItem(0);
 	}
 	
 	private void leftFusion(TFNode node, TFNode parent, TFNode leftSib) {
@@ -479,7 +494,6 @@ public class TwoFourTree implements Dictionary {
 		if(parent.getNumItems() == 0){
 			underflow(parent);
 		}
-		
 	}
 	
 	public static void main(String[] args) {
@@ -545,11 +559,15 @@ public class TwoFourTree implements Dictionary {
         System.out.println("done");*/
 
         myTree = new TwoFourTree(myComp);
-        final int TEST_SIZE = 10000;
+        final int TEST_SIZE = 100;
 
-
+		Random random = new Random();
+		int[] randomNums = new int[100];
+		
         for (int i = 0; i < TEST_SIZE; i++) {
-            myTree.insertElement(new Integer(i), new Integer(i));
+			randomNums[i] = random.nextInt(100);
+            myTree.insertElement(randomNums[i], randomNums[i]);
+			//myTree.insertElement(i, i);
             //myTree.printAllElements();
             myTree.checkTree();
         }
@@ -557,11 +575,18 @@ public class TwoFourTree implements Dictionary {
         System.out.println("removing");
         
         for (int i = 0; i < TEST_SIZE; i++) {
-			
-			int out = (Integer) ((Item) myTree.removeElement(new Integer(i))).key();
+			int out = (Integer) myTree.removeElement(randomNums[i]);
 			myTree.checkTree();
 			
-            if (out != i) {
+			System.out.println(i);
+			
+			if (i == 105) {
+				System.out.println("It's gonna break now");
+			}
+			//int out = (Integer) myTree.removeElement(i).key();
+			myTree.checkTree();
+			
+            if (out != randomNums[i]) {
                 throw new TwoFourTreeException("main: wrong element removed");
             }
             if (i > (TEST_SIZE - 15)) {
@@ -570,5 +595,5 @@ public class TwoFourTree implements Dictionary {
         }
         
         System.out.println("done");
-    }	
+    }
 }
