@@ -466,6 +466,10 @@ public class TwoFourTree implements Dictionary {
 		rightSib.setChild(0, node.getChild(0));
 		node.setChild(0, null);
 		
+		if(parent.getNumItems() == 0){
+			underflow(parent);
+		}
+		
 	}
 	
 	public static void main(String[] args) {
