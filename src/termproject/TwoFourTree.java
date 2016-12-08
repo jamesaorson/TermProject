@@ -30,6 +30,10 @@ import java.util.Random;
   *							element test provided by Dr. Gallagher.
   *     07 Dec 2016 - STG - Made right and left siblings so we don't have to
   *						    keep calling parent.getChild().
+  *		08 Dec 2016 - JAO - Created a search() and moveDownRight() to simplify
+  *							findElement() and removeElement(). Still has issue
+  *							in remove when inserting random elements with seed
+  *							of 10000 or greater.
   * Description: 
   */
 public class TwoFourTree implements Dictionary {
@@ -66,38 +70,15 @@ public class TwoFourTree implements Dictionary {
       */
 	@Override
     public Object findElement(Object key) {
-		if (!treeComp.isComparable(key)) {
-            throw new InvalidIntegerException("Key was not an integer");
-        }
-
-		TFNode currNode = treeRoot;
-		int itemIndex = TFNode.ffgtet(currNode, key, treeComp);
-		
-		//Make a sub-routine
-		//currNode = moveDownRight(itemIndex, currNode, key);
-		while (itemIndex == currNode.getNumItems()) {
-			currNode = currNode.getChild(itemIndex);
-			itemIndex = TFNode.ffgtet(currNode, key, treeComp);
-		}
+		TFNode currNode = null;
+		int itemIndex = -1;
 		
 		//Finds the node we will be inserting into.
-		while (!treeComp.isEqual(currNode.getItem(itemIndex).key(), key) 
-			   && !currNode.isExternal()) {
-			//Looks down child of insertIndex to find exact insert
-			//node. If ending condition is met, we will insert at currNode.
-			currNode = currNode.getChild(itemIndex);
-			
-			itemIndex = TFNode.ffgtet(currNode, key, treeComp);
-			
-			//moveDownRight(itemIndex, currNode, key);
-			while (itemIndex == currNode.getNumItems()) {
-				currNode = currNode.getChild(itemIndex);
-				itemIndex = TFNode.ffgtet(currNode, key, treeComp);
-			}
-		}
+		currNode = search(currNode, key, itemIndex);
+		itemIndex = TFNode.ffgtet(currNode, key, treeComp);
 		
 		if (currNode == null) {
-			throw new ElementNotFoundException("Remove couldn't find element");
+			throw new ElementNotFoundException("Find couldn't find element");
 		}
 		
 		if (treeComp.isEqual(currNode.getItem(itemIndex).key(), key)) {
@@ -107,51 +88,45 @@ public class TwoFourTree implements Dictionary {
 		else {
 			return null;
 		}
-		
-		/*
-        if (!treeComp.isComparable(key)) {
+    }
+	
+	private TFNode search(TFNode currNode, Object key, int itemIndex) {
+		// This will go if we need to run down the right child because the key
+		// we're looking for it greater than all the keys in the node.
+		if (!treeComp.isComparable(key)) {
             throw new InvalidIntegerException("Key was not an integer");
         }
+
+		currNode = treeRoot;
+		itemIndex = TFNode.ffgtet(currNode, key, treeComp);
 		
-		// object that will get returned.
-		Item result = null;
+		currNode = moveDownRight(currNode, key, itemIndex);
+		itemIndex = TFNode.ffgtet(currNode, key, treeComp);
 		
-		// node for walking tree.
-		TFNode currentNode = treeRoot;
-		
-		// while loop varible.
-		boolean isFinished = false;
-		
-		// while we haven't found the item or gotten to bottom of tree,
-		while(!isFinished){
+		while (!treeComp.isEqual(currNode.getItem(itemIndex).key(), key) 
+			   && !currNode.isExternal()) {
+			//Looks down child of insertIndex to find exact insert
+			//node. If ending condition is met, we will insert at currNode.
+			currNode = currNode.getChild(itemIndex);
 			
-			// index of element or child we will be using.
-			int index = TFNode.ffgtet(currentNode, key, treeComp);
-			Object currentKey = currentNode.getItem(index).key();
+			itemIndex = TFNode.ffgtet(currNode, key, treeComp);
 			
-			// if the thing at index equals the incoming key
-			if(treeComp.isEqual(currentKey, key)){
-				// set result and break.
-				result = currentNode.getItem(index);
-				isFinished = true;
-			}else{
-				TFNode nextNode = currentNode.getChild(index);
-				if(nextNode == null){
-					// item isn't in tree so break resulting in a null return.
-					isFinished = true;
-				}else{
-					// walk down tree.
-					currentNode = nextNode;
-				}
-			}
+			currNode = moveDownRight(currNode, key, itemIndex);
+			itemIndex = TFNode.ffgtet(currNode, key, treeComp);
 		}
-		if (result == null) {
-			return null;
+		
+		return currNode;
+	}
+	
+	private TFNode moveDownRight(TFNode currNode, Object key, int itemIndex) {
+		// This will go if we need to run down the right child because the key
+		// we're looking for it greater than all the keys in the node.
+		while (itemIndex == currNode.getNumItems()) {
+			currNode = currNode.getChild(itemIndex);
+			itemIndex = TFNode.ffgtet(currNode, key, treeComp);
 		}
-		else {
-			return result.element();
-		}*/
-    }
+		return currNode;
+	}
 
     /**
       * Inserts provided element into the Dictionary
@@ -197,193 +172,6 @@ public class TwoFourTree implements Dictionary {
         ++size;
     }
 
-    /**
-      * Searches dictionary to determine if key is present, then
-      * removes and returns corresponding object
-      * @param key of data to be removed
-      * @return object corresponding to key
-      * @exception ElementNotFoundException if the key is not in dictionary
-      */
-	@Override
-    public Object removeElement(Object key) throws ElementNotFoundException {
-		//Make a sub-routine
-        if (!treeComp.isComparable(key)) {
-            throw new InvalidIntegerException("Key was not an integer");
-        }
-
-		TFNode currNode = treeRoot;
-		int itemIndex = TFNode.ffgtet(currNode, key, treeComp);
-		
-		//Make a sub-routine
-		//currNode = moveDownRight(itemIndex, currNode, key);
-		while (itemIndex == currNode.getNumItems()) {
-			currNode = currNode.getChild(itemIndex);
-			itemIndex = TFNode.ffgtet(currNode, key, treeComp);
-		}
-		
-		//Finds the node we will be inserting into.
-		while (!treeComp.isEqual(currNode.getItem(itemIndex).key(), key) 
-			   && !currNode.isExternal()) {
-			//Looks down child of insertIndex to find exact insert
-			//node. If ending condition is met, we will insert at currNode.
-			currNode = currNode.getChild(itemIndex);
-			
-			itemIndex = TFNode.ffgtet(currNode, key, treeComp);
-			
-			//moveDownRight(itemIndex, currNode, key);
-			while (itemIndex == currNode.getNumItems()) {
-				currNode = currNode.getChild(itemIndex);
-				itemIndex = TFNode.ffgtet(currNode, key, treeComp);
-			}
-		}
-		
-		if (currNode == null) {
-			throw new ElementNotFoundException("Remove couldn't find element");
-		}
-		
-		if (treeComp.isEqual(currNode.getItem(itemIndex).key(), key)) {
-			Object result = currNode.getItem(itemIndex).element();
-			
-			deleteElement(currNode, itemIndex);
-			
-			return result;
-		}
-		else {
-			throw new ElementNotFoundException("Remove couldn't find element");
-		}
-    }
-	
-	private void moveDownRight(int itemIndex, TFNode currNode, Object key){
-		// This will go if we need to run down the right child because the key
-		// we're looking for it greater than all the keys in the node.
-		while (itemIndex == currNode.getNumItems()) {
-			currNode = currNode.getChild(itemIndex);
-			itemIndex = TFNode.ffgtet(currNode, key, treeComp);
-		}
-		//return currNode;
-	}
-	
-    private void deleteElement(TFNode node, int index){
-        // if node is a leaf
-        if(node.isExternal()){
-            // null item at index
-            node.removeItem(index);
-        }else{ // node is not a leaf
-                // swap with inorder successor
-
-            // walk through tree to inorder successor
-            TFNode successor = node.getChild(index + 1);
-			
-			while(successor.getChild(0) != null){
-					successor = successor.getChild(0);
-			}
-			
-			node.replaceItem(index, successor.getItem(0));
-        }
-
-        underflow(node);
-
-        --size;
-    }
-
-    public void printAllElements() {
-        int indent = 0;
-       
-        if (root() == null) {
-            System.out.println("The tree is empty");
-        }
-        else {
-            printTree(root(), indent);
-        }
-    }
-
-    public void printTree(TFNode start, int indent) {
-        if (start == null) {
-            return;
-        }
-        
-        for (int i = 0; i < indent; i++) {
-            System.out.print(" ");
-        }
-        
-        printTFNode(start);
-        indent += 4;
-        
-        int numChildren = start.getNumItems() + 1;
-        
-        for (int i = 0; i < numChildren; i++) {
-            printTree(start.getChild(i), indent);
-        }
-    }
-
-    public void printTFNode(TFNode node) {
-        int numItems = node.getNumItems();
-        
-        for (int i = 0; i < numItems; i++) {
-            System.out.print(((Item) node.getItem(i)).element() + " ");
-        }
-        
-        System.out.println();
-    }
-    
-    // checks if tree is properly hooked up, i.e., children point to parents
-    public void checkTree() {
-        checkTreeFromNode(treeRoot);
-    }
-
-    private void checkTreeFromNode(TFNode start) {
-        if (start == null) {
-            return;
-        }
-
-        if (start.getParent() != null) {
-            TFNode parent = start.getParent();
-         
-            int childIndex;
-         
-            for (childIndex = 0; childIndex <= parent.getNumItems(); 
-                                 childIndex++) {
-                if (parent.getChild(childIndex) == start) {
-                    break;
-                }
-            }
-            // if child wasn't found, print problem
-            if (childIndex > parent.getNumItems()) {
-                System.out.println("Child to parent confusion");
-                printTFNode(start);
-            }
-        }
-
-        if (start.getChild(0) != null) {
-            for (int childIndex = 0; childIndex <= start.getNumItems();
-                                     childIndex++) {
-                if (start.getChild(childIndex) == null) {
-                    System.out.println("Mixed null and non-null children");
-                    printTFNode(start);
-                }
-                else {
-                    if (start.getChild(childIndex).getParent() != start) {
-                        System.out.println("Parent to child confusion");
-                        printTFNode(start);
-                    }
-        
-                    for (int i = childIndex - 1; i >= 0; i--) {
-                        if (start.getChild(i) == start.getChild(childIndex)) {
-                            System.out.println("Duplicate children of node");
-                            printTFNode(start);
-                        }
-                    }
-                }
-            }
-        }
-
-        int numChildren = start.getNumItems() + 1;
-        
-        for (int childIndex = 0; childIndex < numChildren; childIndex++) {
-            checkTreeFromNode(start.getChild(childIndex));
-        }
-    }
-	
 	private void overflow(TFNode currNode) {
 		while (currNode.getNumItems() > currNode.getMaxItems()) {
 			Item tempItem = currNode.getItem(2);
@@ -414,12 +202,12 @@ public class TwoFourTree implements Dictionary {
 
 			//Hook up child d and e with newNode as parents
 			for(int i = 0; i < 2; i++){
-				if (currNode.getChild(i+3) != null) {
+				if (currNode.getChild(i + 3) != null) {
 					TFNode temp;
-					temp = currNode.getChild(i+3);
+					temp = currNode.getChild(i + 3);
 					temp.setParent(newNode);
 					newNode.setChild(i, temp);
-					currNode.setChild(i+3, null);
+					currNode.setChild(i + 3, null);
 				}
 			}
 
@@ -432,7 +220,62 @@ public class TwoFourTree implements Dictionary {
 			currNode = parent;
 		}
 	}
+	
+    /**
+      * Searches dictionary to determine if key is present, then
+      * removes and returns corresponding object
+      * @param key of data to be removed
+      * @return object corresponding to key
+      * @exception ElementNotFoundException if the key is not in dictionary
+      */
+	@Override
+    public Object removeElement(Object key) throws ElementNotFoundException {
+		TFNode currNode = null;
+		int itemIndex = -1;
+		
+		//Finds the node we will be inserting into.
+		currNode = search(currNode, key, itemIndex);
+		itemIndex = TFNode.ffgtet(currNode, key, treeComp);
+		
+		if (currNode == null) {
+			throw new ElementNotFoundException("Remove couldn't find element");
+		}
+		
+		if (treeComp.isEqual(currNode.getItem(itemIndex).key(), key)) {
+			Object result = currNode.getItem(itemIndex).element();
+			
+			deleteElement(currNode, itemIndex);
+			
+			return result;
+		}
+		else {
+			throw new ElementNotFoundException("Remove couldn't find element");
+		}
+    }
+	
+    private void deleteElement(TFNode node, int index){
+        // if node is a leaf
+        if(node.isExternal()){
+            // null item at index
+            node.removeItem(index);
+        }else{ // node is not a leaf
+                // swap with inorder successor
 
+            // walk through tree to inorder successor
+            TFNode successor = node.getChild(index + 1);
+			
+			while(successor.getChild(0) != null){
+					successor = successor.getChild(0);
+			}
+			
+			node.replaceItem(index, successor.getItem(0));
+        }
+
+        underflow(node);
+
+        --size;
+    }
+	
 	private void underflow(TFNode node) {
 		int index = node.wcit();
 		TFNode parent = node.getParent();
@@ -535,13 +378,111 @@ public class TwoFourTree implements Dictionary {
 			underflow(parent);
 		}
 	}
+
+    public void printAllElements() {
+        int indent = 0;
+       
+        if (root() == null) {
+            System.out.println("The tree is empty");
+        }
+        else {
+            printTree(root(), indent);
+        }
+    }
+
+    public void printTree(TFNode start, int indent) {
+        if (start == null) {
+            return;
+        }
+        
+        for (int i = 0; i < indent; i++) {
+            System.out.print(" ");
+        }
+        
+        printTFNode(start);
+        indent += 4;
+        
+        int numChildren = start.getNumItems() + 1;
+        
+        for (int i = 0; i < numChildren; i++) {
+            printTree(start.getChild(i), indent);
+        }
+    }
+
+    public void printTFNode(TFNode node) {
+        int numItems = node.getNumItems();
+        
+        for (int i = 0; i < numItems; i++) {
+            System.out.print(((Item) node.getItem(i)).element() + " ");
+        }
+        
+        System.out.println();
+    }
+    
+    // checks if tree is properly hooked up, i.e., children point to parents
+    public void checkTree() {
+        checkTreeFromNode(treeRoot);
+    }
+
+    private void checkTreeFromNode(TFNode start) {
+        if (start == null) {
+            return;
+        }
+
+        if (start.getParent() != null) {
+            TFNode parent = start.getParent();
+         
+            int childIndex;
+         
+            for (childIndex = 0; childIndex <= parent.getNumItems(); 
+                                 childIndex++) {
+                if (parent.getChild(childIndex) == start) {
+                    break;
+                }
+            }
+            // if child wasn't found, print problem
+            if (childIndex > parent.getNumItems()) {
+                System.out.println("Child to parent confusion");
+                printTFNode(start);
+            }
+        }
+
+        if (start.getChild(0) != null) {
+            for (int childIndex = 0; childIndex <= start.getNumItems();
+                                     childIndex++) {
+                if (start.getChild(childIndex) == null) {
+                    System.out.println("Mixed null and non-null children");
+                    printTFNode(start);
+                }
+                else {
+                    if (start.getChild(childIndex).getParent() != start) {
+                        System.out.println("Parent to child confusion");
+                        printTFNode(start);
+                    }
+        
+                    for (int i = childIndex - 1; i >= 0; i--) {
+                        if (start.getChild(i) == start.getChild(childIndex)) {
+                            System.out.println("Duplicate children of node");
+                            printTFNode(start);
+                        }
+                    }
+                }
+            }
+        }
+
+        int numChildren = start.getNumItems() + 1;
+        
+        for (int childIndex = 0; childIndex < numChildren; childIndex++) {
+            checkTreeFromNode(start.getChild(childIndex));
+        }
+    }
 	
 	public static void main(String[] args) {
         Comparator myComp = new IntegerComparator();
         TwoFourTree myTree = new TwoFourTree(myComp);
 
         myTree = new TwoFourTree(myComp);
-        final int TEST_SIZE = 5000;
+        final int TEST_SIZE = 10000;
 
 		Random random = new Random();
 		int[] randomNums = new int[TEST_SIZE];
