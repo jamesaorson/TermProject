@@ -149,7 +149,7 @@ public class TFNode {
         else {
 			//Runs through parent's child array comparing pointers to find out
 			//what index of its child array node is in.
-            for (int i = 0; i < nodeParent.getNumItems() + 1; ++i) {
+            for (int i = 0; i <= nodeParent.getNumItems(); ++i) {
                 if (this == nodeParent.getChild(i)) {
                     return i;
                 }
@@ -170,6 +170,16 @@ public class TFNode {
         // if we haven't returned at this point, the insert point is at the
         // first unoccupied index.
         return node.getNumItems();
+	}
+	
+	public int getNumChildren() {
+		int children = 0;
+		
+		while (nodeChildren[children] != null) {
+			++children;
+		} 
+		
+		return children;
 	}
 	
 	public boolean isExternal() {
