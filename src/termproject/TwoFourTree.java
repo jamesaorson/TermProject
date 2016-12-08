@@ -541,7 +541,7 @@ public class TwoFourTree implements Dictionary {
         TwoFourTree myTree = new TwoFourTree(myComp);
 
         myTree = new TwoFourTree(myComp);
-        final int TEST_SIZE = 45000;
+        final int TEST_SIZE = 5000;
 
 		Random random = new Random();
 		int[] randomNums = new int[TEST_SIZE];
