@@ -3,8 +3,6 @@ package termproject;
 import java.util.Random;
 
 /**
-  * 
-  *
   * @author James Osborne
   * @author Spencer Graffunder
   * @version 1.0 
@@ -40,7 +38,12 @@ import java.util.Random;
   *		10 Dec 2016 - JAO/STG - Fixed all issues. 2-4 tree performs correctly.
   * 
   * Description: 
+  *		Node based tree which has nodes that can hold 1-3 items and have 2-4
+  *		children. Tree will be sorted so that the child at n has a key less
+  *		than the key of the item at n, and the child at n+1 has a key greater
+  *		than the key of the item at n.
   */
+
 public class TwoFourTree implements Dictionary {
     private Comparator treeComp;
     private int size = 0;
@@ -58,11 +61,17 @@ public class TwoFourTree implements Dictionary {
         treeRoot = root;
     }
 
+	/**
+	 * @return size of tree
+	 */
 	@Override
     public int size() {
         return size;
     }
 
+	/**
+	 * @return true if tree is empty
+	 */
 	@Override
     public boolean isEmpty() {
         return (size == 0);
@@ -72,6 +81,8 @@ public class TwoFourTree implements Dictionary {
       * Searches dictionary to determine if key is present
       * @param key to be searched for
       * @return object corresponding to key; null if not found
+	  * @throws ElementNotFoundException if an element with the specified key
+	  *			could not be found.
       */
 	@Override
     public Object findElement(Object key) {
@@ -186,10 +197,6 @@ public class TwoFourTree implements Dictionary {
         ++size;
     }
 
-	/**
-	  * 
-	  * @param currNode 
-	  */
 	private void overflow(TFNode currNode) {
 		//AS long as currNode is overflowed, continue to propogate up the tree.
 		while (currNode.getNumItems() > currNode.getMaxItems()) {
@@ -273,10 +280,9 @@ public class TwoFourTree implements Dictionary {
     }
 	
 	/**
-	  * 
-	  * @param node
-	  * @param index 
-	  * @return 
+	  * @param node: node which has the element to be removed
+	  * @param index: index of item in node to be removed
+	  * @return element of deleted item
 	  */
     private Object deleteElement(TFNode node, int index){
 		Item deletedItem = new Item();
@@ -309,10 +315,8 @@ public class TwoFourTree implements Dictionary {
 		return deletedItem.element();
     }
 	
-	/**
-	  * 
-	  * @param node 
-	  */
+	// Dalled when item is removed to check if we need to move elements because
+	// a node has too few items for it's number of children
 	private void underflow(TFNode node) {
 		int index = node.wcit();
 		TFNode parent = node.getParent();
@@ -336,12 +340,8 @@ public class TwoFourTree implements Dictionary {
 		}
 	}
 	
-	/**
-	  *  
-	  * @param node
-	  * @param parent
-	  * @param leftSib 
-	  */
+	// Transfers an item from right sibling to parent and an item from parent
+	// to the node that has been underflowed.
 	private void leftTransfer(TFNode node, TFNode parent, TFNode leftSib) {
 		Item rightmostItemOfSib = leftSib.getItem(leftSib.getNumItems() - 1);
 		TFNode rightmostChildOfSib = leftSib.getChild(leftSib.getNumItems());
@@ -373,12 +373,8 @@ public class TwoFourTree implements Dictionary {
 		leftSib.setChild(leftSib.getNumItems(), temp);
 	}
 	
-	/**
-	  * 
-	  * @param node
-	  * @param parent
-	  * @param rightSib 
-	  */
+	// Transfers an item from left sibling to parent and from parent to node
+	// that has been underflowed.
 	private void rightTransfer(TFNode node, TFNode parent, TFNode rightSib) {
 		Item leftmostItemOfSib = rightSib.getItem(0);
         TFNode leftmostChildOfSib = rightSib.getChild(0);
@@ -400,12 +396,7 @@ public class TwoFourTree implements Dictionary {
 		rightSib.removeItem(0);
 	}
 	
-	/**
-	  * 
-	  * @param node
-	  * @param parent
-	  * @param leftSib 
-	  */
+	// Fusion between current node and left sibling if transfer can't be done
 	private void leftFusion(TFNode node, TFNode parent, TFNode leftSib) {
 		//Pull down (me - 1) parent item (shifting remove)
 		//to right spot of left sibling.
@@ -441,12 +432,7 @@ public class TwoFourTree implements Dictionary {
 		}
 	}
 	
-	/**
-	  * 
-	  * @param node
-	  * @param parent
-	  * @param rightSib 
-	  */
+	// Fusion between current node and right sibling if transfer can't be done
 	private void rightFusion(TFNode node, TFNode parent, TFNode rightSib) {
 		//remove item from parent at node's index
 		Item parentItem = parent.removeItem(node.wcit());
@@ -477,11 +463,6 @@ public class TwoFourTree implements Dictionary {
 		}
 	}
 	
-	/**
-	  * 
-	  * @param parent
-	  * @param sib 
-	  */
 	private void replaceRoot(TFNode parent, TFNode sib) {
 		parent.setChild(sib.wcit(), null);
 		sib.setParent(null);
