@@ -37,6 +37,8 @@ import java.util.Random;
   *		09 Dec 2016 - JAO - Started intensive testing for remove. Only have one
   *							known issue which exists where a node believes it
   *							has 4 items somehow. Problem is present with fusions
+  *		10 Dec 2016 - JAO/STG - Fixed all issues. 2-4 tree performs correctly.
+  * 
   * Description: 
   */
 public class TwoFourTree implements Dictionary {
