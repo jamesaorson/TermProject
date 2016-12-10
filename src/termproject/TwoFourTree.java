@@ -574,15 +574,16 @@ public class TwoFourTree implements Dictionary {
         myTree = new TwoFourTree(myComp);
         final int TEST_SIZE = 10000;
 
-		Random random = new Random();
+		Random random = new Random(System.nanoTime());
 		int[] randomNums = new int[TEST_SIZE];
 		
         for (int i = 0; i < TEST_SIZE; i++) {
+
 			randomNums[i] = random.nextInt(10000);
             myTree.insertElement(randomNums[i], randomNums[i]);
             myTree.checkTree();
         }
-		
+		/*
 		System.out.print("searching");
 		for (int i = 0; i < TEST_SIZE; i++) {
 			int out = (Integer) myTree.findElement(randomNums[i]);
@@ -593,7 +594,7 @@ public class TwoFourTree implements Dictionary {
             }
         }
 		System.out.println(" - success!");
-		
+		*/
         System.out.print("removing");
         for (int i = 0; i < TEST_SIZE; i++) {
 
