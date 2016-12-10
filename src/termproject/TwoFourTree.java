@@ -318,19 +318,19 @@ public class TwoFourTree implements Dictionary {
 			//Can't do this cause of accessing an index outside of the array.
 			//TFNode rightSibling = parent.getChild(index+1);
 			//TFNode leftSibling = parent.getChild(index-1);
-			if (index > 0 && parent.getChild(index-1).getNumItems() >= 2) {
-				leftTransfer(node, parent, parent.getChild(index-1));
+			if (index > 0 && parent.getChild(index - 1).getNumItems() >= 2) {
+				leftTransfer(node, parent, parent.getChild(index - 1));
 			}
 			else if (index < (parent.getNumItems() - 1)
-					 && parent.getChild(index+1).getNumItems() >= 2) {
+					 && parent.getChild(index + 1).getNumItems() >= 2) {
 
-				rightTransfer(node, parent, parent.getChild(index+1));
+				rightTransfer(node, parent, parent.getChild(index + 1));
 			}
 			else if (index > 0 && parent.getChild(node.wcit() - 1) != null) {
-				leftFusion(node, parent, parent.getChild(index-1));
+				leftFusion(node, parent, parent.getChild(index - 1));
 			}
 			else {
-				rightFusion(node, parent, parent.getChild(index+1));
+				rightFusion(node, parent, parent.getChild(index + 1));
 			}
 		}
 		else {
