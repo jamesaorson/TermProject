@@ -161,7 +161,7 @@ public class TFNode {
         else {
 			//Runs through parent's child array comparing pointers to find out
 			//what index of its child array node is in.
-            for (int i = 0; i < nodeParent.getNumChildren(); ++i) {
+            for (int i = 0; i < (nodeParent.getNumItems() + 1); ++i) {
                 if (this == nodeParent.getChild(i)) {
                     return i;
                 }
@@ -171,31 +171,29 @@ public class TFNode {
         }
     }
     
-    static int ffgtet(TFNode node, Object key, Comparator comp){
+	/**
+	  * 
+	  * @param key
+	  * @param comp
+	  * @return 
+	  */
+    int ffgtet(Object key, Comparator comp){
         // go through the node item array and return insert point
-        for (int i = 0; i < node.getNumItems(); i++){
-            if (!comp.isLessThan(node.getItem(i).key(), key)){
+        for (int i = 0; i < numItems; i++){
+            if (!comp.isLessThan(nodeItems[i].key(), key)){
                 return i;
             }
         }
 		
         // if we haven't returned at this point, the insert point is at the
         // first unoccupied index.
-        return node.getNumItems();
+        return numItems;
 	}
 	
-	public int getNumChildren() {
-		int children = 0;
-		
-		for (int i = 0; i <= numItems; ++i) {
-			if (nodeChildren[i] != null) {
-				++children;
-			} 
-		}
-		
-		return children;
-	}
-	
+	/**
+	  * 
+	  * @return 
+	  */
 	public boolean isExternal() {
 		return nodeChildren[0] == null;
 	}
