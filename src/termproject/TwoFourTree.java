@@ -331,7 +331,7 @@ public class TwoFourTree implements Dictionary {
 
 				rightTransfer(node, parent, parent.getChild(index + 1));
 			}
-			else if (index > 0 && parent.getChild(index - 1) != null) {
+			else if (index > 0) {
 				leftFusion(node, parent, parent.getChild(index - 1));
 			}
 			else {
@@ -582,9 +582,10 @@ public class TwoFourTree implements Dictionary {
 			randomNums[i] = random.nextInt(10000);
             myTree.insertElement(randomNums[i], randomNums[i]);
             myTree.checkTree();
-        }
-		/*
+		}
+		
 		System.out.print("searching");
+
 		for (int i = 0; i < TEST_SIZE; i++) {
 			int out = (Integer) myTree.findElement(randomNums[i]);
 			myTree.checkTree();
@@ -593,9 +594,11 @@ public class TwoFourTree implements Dictionary {
                 throw new TwoFourTreeException("main: wrong element found");
             }
         }
+
 		System.out.println(" - success!");
-		*/
+		
         System.out.print("removing");
+
         for (int i = 0; i < TEST_SIZE; i++) {
 
 			int out = (Integer) myTree.removeElement(randomNums[i]);
